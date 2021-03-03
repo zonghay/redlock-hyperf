@@ -1,5 +1,5 @@
 {
-    "name": "redlock-hyperf",
+    "name": "zonghay/redlock-hyperf",
     "type": "library",
     "license": "MIT",
     "keywords": [
