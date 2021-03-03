@@ -2,3 +2,6 @@
 composer.lock
 *.cache
 *.log
+.idea
+.phpstorm.meta.php
+.php_cs
