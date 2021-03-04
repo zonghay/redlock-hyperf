@@ -12,9 +12,9 @@ class RedLock
     /**
      * @var int / microsecond
      */
-    private $retryDelay = 1000;
+    private $retryDelay = 200;
 
-    private $retryCount = 3;
+    private $retryCount = 2;
 
     private $clockDriftFactor = 0.01;
 
@@ -56,13 +56,17 @@ class RedLock
         return $this;
     }
 
-    public function setRetryDelay(int $retryDelay): RedLock
+    /**
+     * @param int $retryDelay / microsecond
+     * @return $this
+     */
+    public function setRetryDelay(int $retryDelay = 200): RedLock
     {
         $this->retryDelay = $retryDelay;
         return $this;
     }
 
-    public function setRetryCount(int $retryCount): RedLock
+    public function setRetryCount(int $retryCount = 2): RedLock
     {
         $this->retryCount = $retryCount;
         return $this;
@@ -118,6 +122,9 @@ class RedLock
         return false;
     }
 
+    /**
+     * @param array $lock
+     */
     public function unlock(array $lock)
     {
         $resource = $lock['resource'];
