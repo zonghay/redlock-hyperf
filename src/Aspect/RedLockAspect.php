@@ -46,16 +46,20 @@ class RedLockAspect extends AbstractAspect
          */
         $annotationArguments = $this->annotationManager->getAnnotation(RedLockAnnotation::class, $className, $method);
 
-        if ($annotationArguments->resource) {
-            $lock = $this->redlock->setRedisPoolName($annotationArguments->poolName)->setRetryCount($annotationArguments->retryCount)->setClockDriftFactor($annotationArguments->clockDriftFactor)->setRetryDelay($annotationArguments->retryDelay)->lock($annotationArguments->resource, $annotationArguments->ttl);
-        } else throw new RedLockException('RedLock Annotation lacks resource argument');
+        if (empty($annotationArguments->resource)) {
+            throw new RedLockException('RedLock Annotation lacks resource argument');
+        }
 
+        if (!is_array($annotationArguments->poolName)) {
+            throw new RedLockException('PoolName Argument must be array');
+        }
+
+        $lock = $this->redlock->setRedisPoolName($annotationArguments->poolName)->setRetryCount($annotationArguments->retryCount)->setClockDriftFactor($annotationArguments->clockDriftFactor)->setRetryDelay($annotationArguments->retryDelay)->lock($annotationArguments->resource, $annotationArguments->ttl);
 
         if ($lock) {
             $result = $proceedingJoinPoint->process();
-            sleep(60);
             $this->redlock->unlock($lock);
             return $result;
-        } else throw new RedLockException('fail with getting lock');
+        } else throw new RedLockException('Fail with getting lock');
     }
 }

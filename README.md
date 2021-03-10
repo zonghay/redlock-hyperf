@@ -12,6 +12,8 @@ Based on [redlock-php](https://github.com/ronnylt/redlock-php) transform to [Hyp
 中文翻译bing一下就好了
 
 ### 使用
+
+#### 简单使用
 ```php
     try {
         $lock = $this->container->get(RedLock::class)->setRedisPoolName()->setRetryCount(1)->lock('redlock-hyperf-test', 60000);
@@ -35,3 +37,15 @@ Based on [redlock-php](https://github.com/ronnylt/redlock-php) transform to [Hyp
   * return：array|false
 * unlock方法，释放锁
   * 参数：lock方法成功后的return
+  
+#### 注解方式
+```php
+class IndexController extends AbstractController
+{
+    /**
+     * @RedLockAnnotation(resource="redlock-hyperf-test", poolName={"default"})
+     */
+    public function index() {}
+}
+```
+SDK提供 RedlockHyperf\Annotation\RedLockAnnotation 注解，作用类于方法上，可以配置resource（必填），poolName，poolName，poolName，clockDriftFactor，ttl等参数
