@@ -37,6 +37,20 @@ Based on [redlock-php](https://github.com/ronnylt/redlock-php) transform to [Hyp
   * return：array|false
 * unlock方法，释放锁
   * 参数：lock方法成功后的return
+* 如果担心请求保持锁的阶段重启或进程退出等情况，建议增加一下代码
+```php
+//参考 RedlockHyperf\Aspect\RedLockAspect
+if ($lock) {
+  //to release lock when server receive exit sign
+  Coroutine::create(function () use ($lock) {
+  $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($lock['validity']);
+  $exited && $this->redlock->unlock($lock);
+  });
+  //do your code
+  $this->redlock->unlock($lock);
+  return $result;
+}
+```
   
 #### 注解方式
 ```php

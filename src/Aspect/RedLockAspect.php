@@ -3,6 +3,9 @@
 namespace RedlockHyperf\Aspect;
 
 use Hyperf\Di\Annotation\Aspect;
+use Hyperf\Utils\Coordinator\Constants;
+use Hyperf\Utils\Coordinator\CoordinatorManager;
+use Hyperf\Utils\Coroutine;
 use RedlockHyperf\Annotation\AnnotationManager;
 use Hyperf\Di\Aop\AbstractAspect;
 use Hyperf\Di\Aop\ProceedingJoinPoint;
@@ -57,6 +60,11 @@ class RedLockAspect extends AbstractAspect
         $lock = $this->redlock->setRedisPoolName($annotationArguments->poolName)->setRetryCount($annotationArguments->retryCount)->setClockDriftFactor($annotationArguments->clockDriftFactor)->setRetryDelay($annotationArguments->retryDelay)->lock($annotationArguments->resource, $annotationArguments->ttl);
 
         if ($lock) {
+            //to release lock when server receive exit sign
+            Coroutine::create(function () use ($lock) {
+                $exited = CoordinatorManager::until(Constants::WORKER_EXIT)->yield($lock['validity']);
+                $exited && $this->redlock->unlock($lock);
+            });
             $result = $proceedingJoinPoint->process();
             $this->redlock->unlock($lock);
             return $result;
