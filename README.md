@@ -8,14 +8,17 @@ Based on [redlock-php](https://github.com/ronnylt/redlock-php) transform to [Hyp
 本sdk基于redlock-php向hyperf ～2.1版本改造。
 
 使用前建议先了解一下Redlock算法的原理，[Redis作者Antirez文章解释Redlock算法（英文）](http://antirez.com/news/77)
+
 中文翻译bing一下就好了
 
 ### 使用
 ```php
     try {
         $lock = $this->container->get(RedLock::class)->setRedisPoolName()->setRetryCount(1)->lock('redlock-hyperf-test', 60000);
-        //do your code
-        $this->container->get(RedLock::class)->unlock($lock);
+        if ($lock) {
+            //do your code
+            $this->container->get(RedLock::class)->unlock($lock);
+        }
     } catch (\Throwable $throwable) {
         var_dump($throwable->getMessage());
     }

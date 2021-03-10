@@ -46,7 +46,7 @@ class RedLock
                     try {
                         $this->instances[$row] = $this->poolFactory->getPool($row)->get();
                     } catch (\Throwable $exception) {
-                        throw new RedLockException($exception->getMessage(), 0, $exception);
+                        throw new RedLockException($exception->getMessage(), $exception->getCode(), $exception);
                     }
                 }
             }
@@ -69,6 +69,12 @@ class RedLock
     public function setRetryCount(int $retryCount = 2): RedLock
     {
         $this->retryCount = $retryCount;
+        return $this;
+    }
+
+    public function setClockDriftFactor(float $clockDriftFactor = 0.01): RedLock
+    {
+        $this->clockDriftFactor = $clockDriftFactor;
         return $this;
     }
 
@@ -114,7 +120,7 @@ class RedLock
             }
 
             // Wait a random delay before to retry
-            $delay = mt_rand(floor($this->retryDelay / 2), $this->retryDelay);
+            $delay = mt_rand((int)floor($this->retryDelay / 2), $this->retryDelay);
 
             --$retry;
         } while ($retry > 0 && \Swoole\Coroutine::sleep($delay/1000));
@@ -140,7 +146,7 @@ class RedLock
         try {
             return $instance->set($resource, $token, ['NX', 'PX' => $ttl]);
         } catch (\Throwable $exception) {
-            throw new RedLockException($exception->getMessage(), 0, $exception);
+            throw new RedLockException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
@@ -157,7 +163,7 @@ class RedLock
         try {
             return $instance->eval($script, [$resource, $token], 1);
         } catch (\Throwable $exception) {
-            throw new RedLockException($exception->getMessage(), 0, $exception);
+            throw new RedLockException($exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 }

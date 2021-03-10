@@ -19,6 +19,7 @@
     },
     "require": {
         "php": ">=7.3",
+        "hyperf/di": "^2.1",
         "hyperf/redis": "^2.1"
     },
     "require-dev": {
