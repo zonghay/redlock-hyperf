@@ -37,7 +37,7 @@ Based on [redlock-php](https://github.com/ronnylt/redlock-php) transform to [Hyp
   * return：array|false
 * unlock方法，释放锁
   * 参数：lock方法成功后的return
-* 如果担心请求保持锁的阶段重启或进程退出等情况，建议增加一下代码
+* 如果担心请求保持锁阶段进程出现重启或退出情况，建议增加以下代码
 ```php
 //参考 RedlockHyperf\Aspect\RedLockAspect
 if ($lock) {
@@ -52,7 +52,7 @@ if ($lock) {
 }
 ```
   
-#### 注解方式
+#### 注解使用
 ```php
 class IndexController extends AbstractController
 {
