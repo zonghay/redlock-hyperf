@@ -9,8 +9,8 @@ Based on [redlock-php](https://github.com/ronnylt/redlock-php) transform to [Hyp
 
 使用前建议先了解一下Redlock算法的原理，[Redis作者Antirez文章解释Redlock算法（英文）](http://antirez.com/news/77)
 
-中文翻译bing一下就好了
-
+我自己也写了一篇文章对RedLock进行了翻译
+[基于Redis的分布式锁算法RedLock及RedLock-Hyperf实现](https://segmentfault.com/a/1190000039663994)
 ### 使用
 
 #### 简单使用
@@ -25,7 +25,7 @@ Based on [redlock-php](https://github.com/ronnylt/redlock-php) transform to [Hyp
         var_dump($throwable->getMessage());
     }
 ```
-* setRedisPoolName方法用于指定Redlock使用哪些Redis实例作为分布式独立节点，这里需要传入索引数组，默认['default']，数组的值应该是/config/autoload/redis下的连接池name
+* setRedisPoolName方法用于指定Redlock使用哪些Redis实例作为分布式独立节点，这里需要传入索引数组，默认['default']，数组的值应该是/config/autoload/redis.php下的连接池name
   关于为什么要使用独立的Redis节点：
   
   ![img.png](img.png)
